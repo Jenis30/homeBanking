@@ -2,35 +2,35 @@ package com.mindhub.homebanking.models;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity  // anotacion  (Crear una tabla en la base de datos con los datos de esta clase)
+@Entity
 public class Client {
 
-    // atributos o propiedades
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO,generator = "native")
-    @GenericGenerator(name = "native" , strategy = "native")
-    private  long id;
-    private String firstName,lastName,email;
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "generatorID")
+    @GenericGenerator(name = "generatorID", strategy = "native")
+    private Long ID;
+    private String firstName;
+    private String lastName;
+    private String email;
 
-
-
-    //constructores
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<Account> accounts = new HashSet<>();
 
     public Client() {
     }
-
     public Client(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
-// metodos o comportamientos
 
+    public Long getId() {
+        return ID;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -40,23 +40,12 @@ public class Client {
         return lastName;
     }
 
-    public long getId() {
-        return id;
-    }
-
     public String getEmail() {
         return email;
     }
 
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", firstNane='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public Set<Account> getAccounts() {
+        return accounts;
     }
 
     public void setFirstName(String firstName) {
@@ -67,9 +56,22 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public void setGmail(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
+    public void addAccount(Account account){
+        account.setClient(this);
+        this.accounts.add(account);
+    }
 
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + ID +
+                ", firstName='" + firstName + '\'' +
+                ", lastsName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
